@@ -1,0 +1,27 @@
+{
+  "name": "2021_microNodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "bash scripts/lint.sh",
+    "dev": "bash scripts/dev.sh",
+    "subtree-init": "bash scripts/init.sh",
+    "stop": "bash scripts/stop.sh",
+    "push": "bash scripts/push.sh",
+    "pull": "bash scripts/push.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@192.168.56.102:portfolio-y0711/micro-feed.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.22.1",
+    "@typescript-eslint/parser": "^4.22.1",
+    "eslint": "^7.26.0",
+    "typescript": "^4.2.4"
+  }
+}
