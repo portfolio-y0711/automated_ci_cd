@@ -6,6 +6,12 @@ _부제: Build Test Deploy 자동화로 Full Cycle Dev 환경 구축하기_
 
 ![CI_CD](./cicd.png)
 
+<br/>
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/_iG7ex1U9aw/0.jpg)](https://www.youtube.com/watch?v=_iG7ex1U9aw)
+
+<br/>
+
 목차 
 
 * 구성요소 (Components / v1.0.0)
