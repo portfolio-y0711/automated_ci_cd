@@ -12,6 +12,8 @@ _부제: Build Test Deploy 자동화로 Full Cycle Dev 환경 구축하기_
 
 <br/>
 
+[Trello 칸반보드 가기 >>>>>](https://trello.com/b/ReTaUBca/automated-ci-cd)
+
 목차 
 
 * 구성요소 (Components / v1.0.0)
