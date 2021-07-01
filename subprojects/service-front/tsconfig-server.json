@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./build",
+    "rootDir": "./",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
+    "downlevelIteration": true,
+    "declaration": true,
+    "baseUrl": ".",
+    "paths": {
+      "@config/*": [
+        "config/*"
+      ]
+    }
+  },
+  "include": [
+    "bin/server"
+  ],
+  "exclude": [
+    "node_modules/*",
+    "trash/*"
+  ]
+}

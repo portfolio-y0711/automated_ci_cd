@@ -1,17 +1,21 @@
-FROM node:14-slim
+FROM node:14
 
-WORKDIR /usr/app
+# ENV NODE_ENV=production
+ENV NODE_ENV=development
 
-COPY gateway.tar.gz .
+WORKDIR /node
 
-RUN tar zxf gateway.tar.gz
+COPY ./package.json ./package.json
 
-RUN mv package.deploy.json package.json
+# RUN apt-get update \
+#   && apt-get install -y curl
 
-RUN npm install
+RUN npm i && npm i -g ts-node && npm cache clean --force
 
-RUN npm i -g ts-node
+WORKDIR /node/app
 
-EXPOSE 8000
+ENV PATH /app/node_modules/.bin/:$PATH
+
+COPY . .
 
 CMD ["ts-node", "-r", "tsconfig-paths/register", "--files", "bin/www.ts"]

@@ -1,0 +1,80 @@
+version: '2.4'
+services:
+  # 로컬 개발용 (Hot Reloading)
+  service-registry:
+    build:
+      dockerfile: Dockerfile
+      context: './subprojects/service-registry'
+    healthcheck: 
+      test: curl -f http://127.0.0.1:7000/api/health
+    volumes: 
+      - ./subprojects/service-registry:/node/app
+      - /node/app/node_modules
+    command: /node/node_modules/.bin/nodemon 
+    container_name: service-registry
+    environment: 
+      - NODE_ENV=development
+
+  service-queue:
+    image: rabbitmq:3.8.17-management
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    volumes:
+      - './subprojects/service-queue/conf/definitions.json:/opt/definitions.json/:ro'
+      - './subprojects/service-queue/rabbitmq.config:/etc/rabbitmq.config:ro'
+    ports: 
+      - "5672:5672"
+      - "15672:15672"
+
+  service-gateway:
+    build:
+      dockerfile: Dockerfile
+      context: './subprojects/service-gateway'
+    healthcheck: 
+      test: curl -f http://127.0.0.1:8000/api/health
+    volumes: 
+      - ./subprojects/service-gateway:/node/app
+      - /node/app/node_modules
+    command: /node/node_modules/.bin/nodemon
+    container_name: service-gateway
+    ports: 
+      - "8000:8000"
+
+    depends_on: 
+      service-registry:
+        condition: service_healthy
+
+  service-api:
+    build:
+      dockerfile: Dockerfile
+      context: './subprojects/service-api'
+    volumes: 
+      - ./subprojects/service-api:/node/app
+      - /node/app/node_modules
+    command: /node/node_modules/.bin/nodemon 
+    container_name: service-api
+
+    depends_on: 
+      service-registry:
+        condition: service_healthy
+      service-queue:
+        condition: service_healthy
+  
+  service-realtime:
+    build:
+      dockerfile: Dockerfile
+      context: './subprojects/service-realtime'
+    volumes:
+      - ./subprojects/service-realtime:/node/app
+      - /node/app/node_modules
+    command: /node/node_modules/.bin/nodemon
+    container_name: service-realtime
+
+    depends_on: 
+      service-registry:
+        condition: service_healthy
+      service-registry:
+        condition: service_healthy

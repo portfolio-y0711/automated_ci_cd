@@ -1,19 +1,18 @@
 FROM node:14-slim
 
-WORKDIR /usr/app
+# ENV NODE_ENV=production
+ENV NODE_ENV=development
 
-COPY api.tar.gz .
+WORKDIR /node
 
-RUN tar zxf api.tar.gz
+COPY package.json ./package.json
 
-RUN mv package.deploy.json package.json
+RUN npm i && npm i -g ts-node && npm cache clean --force
 
-RUN npm install
+WORKDIR /node/app
 
-RUN npm i -g ts-node
+ENV PATH /app/node_modules/.bin/:$PATH
 
-ENV SERVER_PORT=3010
-
-EXPOSE 3010
+COPY . .
 
 CMD ["ts-node", "-r", "tsconfig-paths/register", "--files", "bin/www.ts"]

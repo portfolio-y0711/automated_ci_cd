@@ -1,17 +1,24 @@
-FROM node:14-slim
+FROM node:14
 
-WORKDIR /usr/app
+# ENV NODE_ENV=production
+ENV NODE_ENV=development
 
-COPY registry.tar.gz .
+WORKDIR /node
 
-RUN tar zxf registry.tar.gz
+COPY ./package.json ./package.json
 
-RUN mv package.deploy.json package.json
+# RUN apt-get update \
+#  && apt-get install -y curl
 
-RUN npm install
+# RUN cd /etc/apt && \
+#        sed -i 's/deb.debian.org/ftp.kaist.ac.kr/g' sources.list
 
-RUN npm i -g ts-node
+RUN npm i && npm i -g ts-node && npm cache clean --force
 
-EXPOSE 7000
+WORKDIR /node/app
+
+ENV PATH /app/node_modules/.bin/:$PATH
+
+COPY . .
 
 CMD ["ts-node", "-r", "tsconfig-paths/register", "--files", "bin/www.ts"]

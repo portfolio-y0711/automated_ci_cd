@@ -1,0 +1,5 @@
+node_modules
+assets
+*.tar.gz
+trash
+bin/dev.sqlite

@@ -1,0 +1,84 @@
+version: '2.4'
+services:
+  #### 로컬 배포 테스트용 ###
+  # 1. 서비스 레지스트리
+  service-registry:
+    build:
+      dockerfile: Dockerfile
+      context: './subprojects/service-registry'
+    healthcheck: 
+      test: curl -f http://127.0.0.1:7000/api/health
+    environment: 
+      - NODE_ENV=development
+
+  # 2. 서비스 게이트웨이
+  service-gateway:
+    build:
+      dockerfile: Dockerfile
+      context: './subprojects/service-gateway'
+    healthcheck: 
+      test: curl -f http://127.0.0.1:8000/api/health
+    ports: 
+      - "8000:8000"
+
+    depends_on: 
+      service-registry:
+        condition: service_healthy
+
+  # 3. Nginx 리버스 프록시
+  service-proxy:
+    build:
+      dockerfile: Dockerfile
+      context: './subprojects/_service-proxy'
+    ports: 
+      - "80:80"
+
+    depends_on: 
+      service-gateway:
+        condition: service_healthy
+
+  # 4. 서비스 API
+  service-api:
+    build:
+      dockerfile: Dockerfile
+      context: './subprojects/service-api'
+
+    depends_on: 
+      service-registry:
+        condition: service_healthy
+
+  # 5. 서비스 UI
+  service-front:
+    build:
+      dockerfile: Dockerfile
+      context: './subprojects/service-front'
+
+    depends_on: 
+      service-registry:
+        condition: service_healthy
+
+  # 6. 서비스 Message Queue
+  service-queue:
+    image: rabbitmq:3.6.5-management
+    volumes:
+      # - './subprojects/service-queue/data:/var/lib/rabbitmq:rw'
+      - './subprojects/service-queue/conf/definitions.json:/opt/definitions.json/:ro'
+      - './subprojects/service-queue/rabbitmq.config:/etc/rabbitmq.config:ro'
+    ports: 
+      - "5672:5672"
+      - "15672:15672"
+   
+  # 7. 서비스 Real-time Socket-io 
+  service-realtime:
+    build:
+      dockerfile: Dockerfile
+      context: './subprojects/service-realtime'
+    volumes:
+      - ./subprojects/service-realtime:/node/app
+      - /node/app/node_modules
+    command: /node/node_modules/.bin/nodemon
+    container_name: service-realtime
+
+    depends_on: 
+      service-registry:
+        condition: service_healthy

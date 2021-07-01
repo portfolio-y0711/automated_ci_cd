@@ -1,0 +1,8 @@
+bin/dev.sqlite
+.npmrc
+.npmrc.local
+.npmrc.server
+Jenkinsfile
+node_modules
+network
+scripts

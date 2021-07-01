@@ -1,0 +1,53 @@
+pipeline {
+    agent {
+        label 'node1'
+    }
+
+    tools {
+      nodejs 'node14'
+    }
+
+    stages {
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                    npm install -g yarn
+                '''
+
+                sh '''
+                    yarn install
+                '''
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh '''
+                   yarn unit 
+                '''
+            }
+        }
+
+        stage('Staging Deploy') {
+            when {
+                branch 'stage'
+            }
+            steps {
+                sh '''
+                    yarn stage:_start
+                '''
+            }
+        }
+
+        stage('Production Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                sh '''
+                    yarn remote:_start
+                '''
+            }
+        }
+    }
+}
